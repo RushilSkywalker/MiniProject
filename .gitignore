@@ -7,3 +7,5 @@ coverage/
 *.log
 .impeccable/review/
 backend/config/live-schema.json
+
+.vercel/

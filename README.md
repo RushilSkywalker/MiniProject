@@ -22,6 +22,20 @@ npm start          # serves the built UI and API at http://127.0.0.1:3001
 
 `npm install` is also supported; `npm ci` reproduces the committed lockfile. The development Vite proxy targets port 3001. If changing `PORT` for development, update the proxy in `vite.config.ts` too. Production uses the same Express origin. This project binds to localhost and has no authentication; it is intended for local demonstrations, not an unprotected public deployment.
 
+## Deploy the demo to Vercel
+
+The repository includes `vercel.json` and serverless entry points in `api/`. Vercel serves the built frontend from `dist/client`; `/api/health` and `/api/query` invoke the existing Express workflow without starting a listening server. The demo schema is included in the function bundle.
+
+1. Commit and push the updated project to the repository connected to Vercel.
+2. In the Vercel project settings, set **Root Directory** to the repository root (leave blank / `.`), **not** `frontend` or `backend`.
+3. Use **Vite** as the framework preset. The committed configuration specifies **Install Command:** `npm ci`, **Build Command:** `npm run build`, and **Output Directory:** `dist/client`. Remove conflicting dashboard overrides.
+4. Use Node.js **22.x**. Set `APP_MODE=demo` in Vercel Environment Variables, with no API keys needed.
+5. Redeploy the latest commit. Check `/` and `/api/health` on the deployment URL, then submit a demo question. If a successful deployment still gives a platform 404, check that the custom/project domain is assigned to that deployment.
+
+For later live deployment, configure secrets in Vercel Environment Variables (never in frontend variables). Include the real schema JSON in the deployment and point `GRAPH_SCHEMA_PATH` to it; the ignored local `live-schema.json` is not automatically uploaded from Git. A different schema directory also needs a matching `includeFiles` setting. The function duration is configured for 120 seconds, subject to your Vercel plan. Memory-based request limiting is per function instance, not a shared global quota; use platform-level protection before exposing a paid live API publicly. Driver reuse is per warm function instance and serverless lifecycle is managed by Vercel.
+
+Configuration references: [Vercel project configuration](https://vercel.com/docs/project-configuration/vercel-json) and [Node.js functions](https://vercel.com/docs/functions/runtimes/node-js). Local tests do not replace verification of an actual deployment.
+
 ## Stack and layout
 
 React 19 + Vite + Tailwind CSS 4; Node.js + Express 5; TypeScript; official OpenAI and Neo4j SDKs; Zod validation; Vitest + Supertest. Manrope fonts are bundled locally, with Lucide icons. No framework for agents, second database, or authentication system.
