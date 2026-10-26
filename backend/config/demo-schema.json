@@ -1,0 +1,67 @@
+{
+  "name": "E-commerce product catalog",
+  "nodes": [
+    {
+      "label": "Product",
+      "description": "Fictional catalog product. Price is INR; rating is a catalog average out of 5; reviewCount is the total review count snapshot.",
+      "properties": {
+        "id": "string",
+        "name": "string",
+        "price": "number",
+        "rating": "number",
+        "reviewCount": "number",
+        "inStock": "boolean"
+      }
+    },
+    {
+      "label": "Category",
+      "description": "Product category",
+      "properties": {
+        "name": "string"
+      }
+    },
+    {
+      "label": "Feature",
+      "description": "Product capability or specification",
+      "properties": {
+        "name": "string"
+      }
+    },
+    {
+      "label": "Review",
+      "description": "Selected customer review excerpt; not the full corpus used for catalog summaries",
+      "properties": {
+        "id": "string",
+        "rating": "number",
+        "title": "string",
+        "text": "string",
+        "verifiedPurchase": "boolean"
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "type": "IN_CATEGORY",
+      "from": "Product",
+      "to": "Category",
+      "description": "Product belongs to a category",
+      "properties": {
+        "since": "number"
+      }
+    },
+    {
+      "type": "HAS_FEATURE",
+      "from": "Product",
+      "to": "Feature",
+      "description": "Product offers a feature",
+      "properties": {}
+    },
+    {
+      "type": "HAS_REVIEW",
+      "from": "Product",
+      "to": "Review",
+      "description": "Product has a selected customer review",
+      "properties": {}
+    }
+  ]
+}

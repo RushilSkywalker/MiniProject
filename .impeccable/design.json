@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-25T11:48:35.303018+00:00",
+  "title": "Design System: GraphQuery",
+  "extensions": {
+    "motion": [
+      {
+        "name": "button-feedback",
+        "value": "background 0.15s, color 0.15s",
+        "purpose": "Button state feedback; removed under reduced motion."
+      },
+      {
+        "name": "loading",
+        "value": "spin 1s linear infinite",
+        "purpose": "Loading indicator; disabled under reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "narrow-desktop",
+        "value": "1050px"
+      },
+      {
+        "name": "mobile",
+        "value": "760px"
+      },
+      {
+        "name": "wide-header",
+        "value": "1500px"
+      }
+    ],
+    "typographyMeta": {
+      "display": {
+        "displayName": "Page title",
+        "purpose": "36px desktop; 31px at widths up to 760px."
+      },
+      "question": {
+        "displayName": "Question input",
+        "purpose": "13px desktop; 16px at widths up to 760px."
+      }
+    },
+    "review": {
+      "disposition": "ship",
+      "scope": "Mobile screenshot plus source review, as reported by the coordinating reviewer.",
+      "caveat": "Minor font-sizing caveat: supporting metadata remains 9\u201311px; consider larger sizes for projection and low-vision use.",
+      "evidenceLimit": "This documentation pass inspected source; it does not add screenshots or claim independent visual verification."
+    }
+  },
+  "components": [
+    {
+      "name": "Primary action",
+      "kind": "button",
+      "description": "Submit the question.",
+      "html": "<button class=\"ds-primary\">Ask GraphQuery</button>",
+      "css": ".ds-primary{font-family:\"Manrope Variable\",sans-serif;width:100%;background:var(--accent,#226448);color:#fff;border:0;border-radius:8px;padding:13px;font-size:13px;font-weight:650;cursor:pointer;transition:background .15s,color .15s}.ds-primary:hover:not(:disabled){background:#184d36}.ds-primary:disabled{opacity:.5;cursor:not-allowed}.ds-primary:focus-visible{outline:3px solid #438862;outline-offset:4px}",
+      "refersTo": "button-primary"
+    },
+    {
+      "name": "Example action",
+      "kind": "button",
+      "description": "Fill the question from an example.",
+      "html": "<button class=\"ds-example\">Which courses is Ananya enrolled in?</button>",
+      "css": ".ds-example{font-family:\"Manrope Variable\",sans-serif;display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid #edf0eb;padding:13px 0;font-size:11px;line-height:1.7;cursor:pointer;color:#172c25;transition:background .15s,color .15s}.ds-example:hover{color:var(--accent,#226448);background:#f5f8f1}.ds-example:disabled{opacity:.5;cursor:not-allowed}.ds-example:focus-visible{outline:3px solid #438862;outline-offset:4px}"
+    },
+    {
+      "name": "Question field",
+      "kind": "input",
+      "description": "English question input.",
+      "html": "<label class=\"ds-label\" for=\"ds-question\">Your question in English</label><textarea class=\"ds-field\" id=\"ds-question\" placeholder=\"e.g. Which courses is Ananya enrolled in?\"></textarea>",
+      "css": ".ds-label{font-family:\"Manrope Variable\",sans-serif;display:block;font-size:12px;font-weight:700;margin-bottom:10px;color:#172c25}.ds-field{font-family:\"Manrope Variable\",sans-serif;display:block;width:100%;min-height:134px;resize:vertical;border:1px solid #cad6cc;border-radius:8px;padding:14px;font-size:13px;font-weight:450;line-height:1.7;background:#fcfdfb;color:#172c25;caret-color:var(--accent,#226448)}.ds-field::placeholder{color:#67786e}.ds-field:focus-visible{outline:3px solid #438862;outline-offset:4px}@media(max-width:760px){.ds-field{font-size:16px}}",
+      "refersTo": "question-field"
+    },
+    {
+      "name": "Mode badge",
+      "kind": "chip",
+      "description": "Noninteractive demo mode indicator.",
+      "html": "<span class=\"ds-badge\"><span class=\"ds-dot\"></span>Demo Mode</span>",
+      "css": ".ds-badge{font-family:\"Manrope Variable\",sans-serif;display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border:1px solid #c9d7bc;border-radius:20px;background:#f0f5e9;color:#416032;font-size:11px;font-weight:750;white-space:nowrap}.ds-dot{width:6px;height:6px;border-radius:50%;background:currentColor}",
+      "refersTo": "mode-badge"
+    },
+    {
+      "name": "Workbench panel",
+      "kind": "card",
+      "description": "Flat bordered content container.",
+      "html": "<section class=\"ds-panel\"><h2 class=\"ds-panel-title\">Ask your graph</h2></section>",
+      "css": ".ds-panel{font-family:\"Manrope Variable\",sans-serif;background:#fff;color:#172c25;border:1px solid var(--border,#dce3dc);border-radius:12px;overflow:hidden;padding:24px}.ds-panel-title{margin:0;font-size:16px;font-weight:750;letter-spacing:-.025em}",
+      "refersTo": "panel"
+    },
+    {
+      "name": "Explanation link",
+      "kind": "nav",
+      "description": "In-page navigation link.",
+      "html": "<a class=\"ds-nav\" href=\"#how-it-works\">How it works</a>",
+      "css": ".ds-nav{font-family:\"Manrope Variable\",sans-serif;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:8px;color:#172c25;text-decoration:none}.ds-nav:hover{color:var(--accent,#226448);text-decoration:underline;text-underline-offset:4px}.ds-nav:focus-visible{outline:3px solid #438862;outline-offset:4px}"
+    },
+    {
+      "name": "Generated Cypher",
+      "kind": "custom",
+      "description": "Distinct dark query evidence surface.",
+      "html": "<section class=\"ds-code\"><h3>Generated Cypher</h3><pre><code>MATCH (s:Student)\nRETURN s.name</code></pre></section>",
+      "css": ".ds-code{font-family:\"Manrope Variable\",sans-serif;background:#172c25;border-radius:8px;overflow:hidden;color:#d9e9df}.ds-code h3{margin:0;padding:13px 17px;border-bottom:1px solid #32483d;font-size:11px;font-weight:600}.ds-code pre{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:11px;line-height:1.9;margin:0;white-space:pre-wrap;overflow-wrap:anywhere;padding:20px;color:#c7e8b9}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Classroom Workbench",
+    "overview": "The classroom workbench is a light Operate interface: off-white canvas, white panels, green actions, and quiet separators. Its restrained density keeps questions, generated code, review, and results legible as a single working surface. This description preserves the incumbent direction; it is an implementation decision, not a newly claimed user preference.\n\nFlat surfaces and a compact type hierarchy favor inspection. The dark query panel provides the strongest tonal distinction. Locally bundled Manrope supplies the interface voice; system monospace identifies code and parameter values.",
+    "keyCharacteristics": [
+      "Light canvas with forest-green actions.",
+      "Flat bordered panels and a distinct dark code surface.",
+      "Two columns on desktop; a single reading-order stack on mobile.",
+      "Explicit asynchronous feedback and visible keyboard focus."
+    ],
+    "rules": [],
+    "dos": [
+      "Do use the primary green for the main action and positive review cues.",
+      "Do retain visible focus rings, labeled inputs, and textual state descriptions.",
+      "Do preserve wrapping for code and questions and horizontal scrolling for result tables.",
+      "Do keep demo and live labels explicit."
+    ],
+    "donts": [
+      "Don't add panel shadows to this flat workbench.",
+      "Don't make the whole workspace dark; reserve the dark container treatment for code.",
+      "Don't treat the existing small metadata sizes as a general body-text recommendation."
+    ]
+  }
+}

@@ -1,6 +1,6 @@
 # GraphQuery: Natural Language to Neo4j Cypher
 
-A fifth-semester VTU mini project that makes a graph database accessible through English questions. Inspect the generated Cypher, a separate AI review, and the actual query results. The code uses direct SDK calls and small service modules so its architecture can be explained in a viva.
+A fifth-semester VTU mini project that searches an e-commerce product catalog through English questions. Inspect the generated Cypher, a separate AI review, and the actual query results. The code uses direct SDK calls and small service modules so its architecture can be explained in a viva.
 
 ## Quick start — no credentials needed
 
@@ -49,19 +49,21 @@ The mode badge, review text, and results explicitly label simulation. Demo adapt
 
 Supported questions (case-insensitive, one trailing punctuation mark optional):
 
-1. **List all students in semester 5.** — Ananya, Arjun, Kabir, Meera.
-2. **Which students are enrolled in Database Management Systems?** — Ananya, Arjun, Meera.
-3. **Who teaches Computer Networks?** — Prof. Vikram Shah.
-4. **How many students belong to each department?** — Computer Science: 3; Electronics: 2; Mechanical: 1.
-5. **Which courses is Ananya enrolled in?** — Computer Networks and Database Management Systems, four credits each.
+1. **Find in-stock headphones under INR 5000 with a rating of at least 4.** — BeatLite Air (INR 2,499), SoundWave Pro (INR 4,499), cheapest first.
+2. **Show available laptops priced between INR 40000 and INR 70000.** — WorkBook 14 (INR 54,999), CreatorBook 15 (INR 68,999). Price boundaries are inclusive.
+3. **Which in-stock headphones have noise cancellation?** — SoundWave Pro, QuietStudio Max, cheapest first.
+4. **Show verified customer reviews for SoundWave Pro.** — two selected review excerpts, highest rating first.
+5. **Find in-stock products rated at least 4.5 with 100 or more reviews.** — QuietStudio Max, CreatorBook 15, SoundWave Pro, WorkBook 14, highest rating first.
+
+All products, prices and reviews are fictional. Prices use INR and ratings are out of 5. Product `rating` and `reviewCount` are catalog summary snapshots. The Review nodes contain selected excerpts, **not** the full review corpus, so those excerpts are not used to recalculate catalog averages. Unavailable products are excluded from the availability-based examples.
 
 Other outcomes, under **Explore other outcomes**:
 
-- **List all students in semester 9.** — successful empty result.
-- **Show the best students.** — clarification needed; no grade data exists.
+- **Find in-stock headphones under INR 500.** — successful empty result.
+- **Find the best product for me.** — asks for category, budget and must-have features.
 - **Demonstrate a rejected query.** — intentionally mismatched candidate, rejected by the simulated reviewer; no retrieval.
 
-Every other question gets an unsupported response, not invented results. The demo supports the listed exact examples rather than general paraphrasing. The optional `backend/config/demo-seed.cypher` can load the same fictional graph into a **separate development database**. Run it manually only if desired. The app never seeds or modifies any database automatically.
+Every other question gets an unsupported response, not invented results. The demo supports the listed exact examples rather than general paraphrasing. The optional `backend/config/demo-seed.cypher` can load the same fictional product catalog into a **separate development database**. Run it manually only if desired. The app never seeds or modifies any database automatically.
 
 ## Configure live mode later
 
@@ -159,7 +161,7 @@ The application reuses a Neo4j driver, closes per-call sessions in `finally`, an
 curl http://127.0.0.1:3001/api/health
 curl -X POST http://127.0.0.1:3001/api/query \
   -H 'Content-Type: application/json' \
-  -d '{"question":"Who teaches Computer Networks?"}'
+  -d '{"question":"Which in-stock headphones have noise cancellation?"}'
 ```
 
 A successful response contains these fields (elapsed time varies):
@@ -170,22 +172,74 @@ A successful response contains these fields (elapsed time varies):
   "mode": "demo",
   "status": "success",
   "message": "Query completed.",
-  "elapsedMs": 1,
+  "elapsedMs": 2,
   "generation": {
     "status": "generated",
-    "cypher": "MATCH (f:Faculty)-[:TEACHES]->(c:Course) WHERE c.name = $course RETURN f.name AS faculty, c.name AS course ORDER BY faculty ASC LIMIT $limit",
-    "parameters": [{"name":"course","type":"string","value":"Computer Networks"},{"name":"limit","type":"number","value":100}],
-    "explanation": "Finds the faculty member who teaches Computer Networks.",
+    "cypher": "MATCH (c:Category)<-[:IN_CATEGORY]-(p:Product)-[:HAS_FEATURE]->(f:Feature) WHERE c.name = $category AND p.inStock = $inStock AND f.name = $feature RETURN p.name AS product, p.price AS priceINR, p.rating AS rating, p.reviewCount AS reviewCount ORDER BY priceINR ASC, product ASC LIMIT $limit",
+    "parameters": [
+      {
+        "name": "category",
+        "type": "string",
+        "value": "Headphones"
+      },
+      {
+        "name": "inStock",
+        "type": "boolean",
+        "value": true
+      },
+      {
+        "name": "feature",
+        "type": "string",
+        "value": "Noise cancellation"
+      },
+      {
+        "name": "limit",
+        "type": "number",
+        "value": 100
+      }
+    ],
+    "explanation": "Finds in-stock headphones with noise cancellation, cheapest first.",
     "clarification": null
   },
   "candidate": {
-    "cypher": "MATCH (f:Faculty)-[:TEACHES]->(c:Course) WHERE c.name = $course RETURN f.name AS faculty, c.name AS course ORDER BY faculty ASC LIMIT $limit",
-    "parameters": {"course":"Computer Networks","limit":100},
+    "cypher": "MATCH (c:Category)<-[:IN_CATEGORY]-(p:Product)-[:HAS_FEATURE]->(f:Feature) WHERE c.name = $category AND p.inStock = $inStock AND f.name = $feature RETURN p.name AS product, p.price AS priceINR, p.rating AS rating, p.reviewCount AS reviewCount ORDER BY priceINR ASC, product ASC LIMIT $limit",
+    "parameters": {
+      "category": "Headphones",
+      "inStock": true,
+      "feature": "Noise cancellation",
+      "limit": 100
+    },
     "limit": 100
   },
-  "review": {"verdict":"approved","explanation":"Simulated review passed for this deterministic demo example.","issues":[],"clarification":null},
-  "result": {"columns":["faculty","course"],"rows":[["Prof. Vikram Shah","Computer Networks"]]},
-  "rowCount": 1,
+  "review": {
+    "verdict": "approved",
+    "explanation": "Simulated review passed for this deterministic demo example.",
+    "issues": [],
+    "clarification": null
+  },
+  "result": {
+    "columns": [
+      "product",
+      "priceINR",
+      "rating",
+      "reviewCount"
+    ],
+    "rows": [
+      [
+        "SoundWave Pro",
+        4499,
+        4.6,
+        240
+      ],
+      [
+        "QuietStudio Max",
+        7999,
+        4.8,
+        320
+      ]
+    ]
+  },
+  "rowCount": 2,
   "limitReached": false
 }
 ```
